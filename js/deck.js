@@ -44,6 +44,19 @@
       tn.parentNode.replaceChild(frag, tn);
     });
     root.querySelectorAll('.grad, code').forEach(function (g) { g.classList.add('ch'); g.dataset.final = g.textContent; });
+    /* punctuation right after a <code> / highlighted span stays on that line (no ": ..." at a line start) */
+    root.querySelectorAll('.w').forEach(function (w) {
+      var prev = w.previousSibling;
+      if (!prev || prev.nodeType !== 1 || prev.classList.contains('w') || !/^[:;,.!?)]/.test(w.textContent)) return;
+      /* the last word unit of the previous element: itself if it is one, else its last .w / .nw / code / .grad */
+      var unit = prev.matches('code, .grad, .nw') ? prev : [].slice.call(prev.querySelectorAll('.w, .nw, code, .grad')).pop();
+      if (!unit) return;
+      var top = unit.parentNode.closest('.nw, code, .grad'); if (top && prev.contains(top)) unit = top;
+      if (unit.classList.contains('w')) { while (w.firstChild) unit.appendChild(w.firstChild); w.remove(); return; }
+      var glue = document.createElement('span'); glue.className = 'w';
+      unit.parentNode.insertBefore(glue, unit); glue.appendChild(unit);
+      while (w.firstChild) glue.appendChild(w.firstChild); w.remove();
+    });
   }
   document.querySelectorAll('.st').forEach(splitText);
 
@@ -401,6 +414,16 @@
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) { if (dx < 0) go(cur + 1); else go(cur - 1); }
   }, { passive: true });
 
+  /* ---- fixed 1600x900 stage: scale to fit the window, letterboxed (CSS turns it on from 981px wide) ---- */
+  var STAGE = window.matchMedia('(min-width: 981px)'), K = 1;
+  function fit() {
+    K = STAGE.matches ? Math.min(window.innerWidth / 1600, window.innerHeight / 900) : 1;
+    document.documentElement.style.setProperty('--k', K);
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  function kOf(el) { return el.closest('.deck') ? K : 1; } /* screen px -> canvas px inside the scaled stage */
+
   /* cursor spotlight on background and glow cards; magnetic pull on navigation targets */
   var spot = document.querySelector('.bg .spot');
   var magnet = null;
@@ -410,15 +433,15 @@
     var tgt = e.target && e.target.closest ? e.target : null;
     var c = tgt && tgt.closest('.card, .ov-card');
     if (c) {
-      var r = c.getBoundingClientRect();
-      c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-      c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      var r = c.getBoundingClientRect(), kc = kOf(c);
+      c.style.setProperty('--mx', (e.clientX - r.left) / kc + 'px');
+      c.style.setProperty('--my', (e.clientY - r.top) / kc + 'px');
     }
     if (RM.matches || !FINE.matches) return;
     var m = tgt && tgt.closest('.magnet');
     if (magnet && magnet !== m) { magnet.style.transform = ''; magnet = null; }
     if (m) {
-      var rr = m.getBoundingClientRect(), k = m.classList.contains('card') ? 0.05 : 0.22;
+      var rr = m.getBoundingClientRect(), k = (m.classList.contains('card') ? 0.05 : 0.22) / kOf(m);
       m.style.transform = 'translate(' + ((e.clientX - rr.left - rr.width / 2) * k).toFixed(1) + 'px,' + ((e.clientY - rr.top - rr.height / 2) * k).toFixed(1) + 'px)';
       magnet = m;
     }
