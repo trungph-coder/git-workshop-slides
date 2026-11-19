@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Git cho Team Dev - Workshop</title>
+<meta name="description" content="Slide workshop Git cho team dev: bản chất, 4 vùng làm việc, merge, rebase, reset, cherry-pick, worktree, quy trình nhóm, git hooks và các tình huống cứu nguy, minh hoạ bằng animation.">
+<meta name="theme-color" content="#06070c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306070c'/%3E%3Cpath d='M20 44V20M20 32c0-8 24-6 24-14' stroke='%23f05033' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='20' cy='44' r='6' fill='%23f05033'/%3E%3Ccircle cx='44' cy='18' r='6' fill='%23a78bfa'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="css/deck.css">
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="grid"></div><div class="spot"></div></div>
+<div class="progress" aria-hidden="true"><i></i></div>
+
+<main class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide center" data-title="Git cho Team Dev" data-part="Mở đầu" data-ex="title">
+  <div class="title-art ex-stage" aria-hidden="true"></div>
+  <span class="kick rv">Workshop nội bộ - 90 đến 120 phút</span>
+  <h1 class="st">Git cho <span class="grad">Team Dev</span></h1>
+  <p class="lead rv">Từ hiểu bản chất, làm chủ quy trình đến xử lý sự cố thực chiến. Mỗi khái niệm có một animation để bạn nhìn thấy Git làm gì bên trong.</p>
+  <div class="meta rv"><span>Biên soạn và trình bày: <b>Diện Nguyễn Duy</b></span><span>Dành cho: <b>Frontend, Backend, Mobile, QA/QC</b></span></div>
+  <div class="kbd-hint rv"><kbd>→</kbd><kbd>Space</kbd> tiếp <kbd>←</kbd> lùi <kbd>O</kbd> tổng quan <kbd>F</kbd> toàn màn hình <kbd>R</kbd> phát lại animation</div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Mục lục" data-part="Mở đầu" id="s-toc">
+  <span class="kick">Lộ trình</span>
+  <h2 class="st">6 phần, đi từ <span class="hl-o">bản chất</span> tới <span class="hl-o">cứu nguy</span></h2>
+  <div class="toc">
+    <button class="card lift rv" data-go="p1"><span class="num">01</span><h3>Sự ra đời và lợi ích</h3><p>Vì sao Linus viết Git năm 2005, và vì sao mọi dev cần nó.</p></button>
+    <button class="card lift rv" data-go="p2"><span class="num">02</span><h3>Bản chất dữ liệu</h3><p>Snapshot, 4 vùng làm việc, HEAD và detached HEAD.</p></button>
+    <button class="card lift rv" data-go="p3"><span class="num">03</span><h3>Câu lệnh cốt lõi</h3><p>Fast-forward, merge, rebase, pull, reset, cherry-pick, worktree, tag.</p></button>
+    <button class="card lift rv" data-go="p4"><span class="num">04</span><h3>Quy trình nhóm</h3><p>Phân nhánh, đặt tên, Conventional Commits, 6 bước mỗi ngày.</p></button>
+    <button class="card lift rv" data-go="p5"><span class="num">05</span><h3>Git Hooks</h3><p>Tự động chặn code bẩn trước khi commit và push.</p></button>
+    <button class="card lift rv" data-go="p6"><span class="num">06</span><h3>Tình huống thực chiến</h3><p>7 sự cố hay gặp và cách cứu, kèm cheat sheet.</p></button>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" id="p1" data-title="2005: Git ra đời" data-part="Phần 1 - Sự ra đời" data-ex="history">
+  <span class="kick">Phần 1 - Sự ra đời</span>
+  <h2 class="st">2005: Git được viết trong <span class="hl-o">vài tuần</span></h2>
+  <div class="timeline">
+    <div class="bar"></div>
+    <div class="ms card"><span class="yr">Trước 2005</span><h3>BitKeeper</h3><p>Linux Kernel dùng BitKeeper, một hệ thống quản lý phiên bản tập trung (CVCS), phần mềm độc quyền thương mại.</p></div>
+    <div class="ms card"><span class="yr">2005</span><h3>Giấy phép bị thu hồi</h3><p>Quan hệ đổ vỡ, giấy phép miễn phí mất. CVS và SVN thì quá chậm và phụ thuộc máy chủ trung tâm.</p></div>
+    <div class="ms card"><span class="yr">04/2005</span><h3>Linus Torvalds viết Git</h3><p>Cha đẻ của Linux tự thiết kế và viết Git chỉ trong vài tuần, với 4 tiêu chí khắt khe.</p></div>
+  </div>
+  <div class="grid-cards g4">
+    <div class="card lift crit"><span class="num">01</span><h3>Tốc độ</h3><p>Nhanh gấp hàng chục lần hệ thống cũ.</p></div>
+    <div class="card lift crit"><span class="num">02</span><h3>Phân tán</h3><p>Không có Single Point of Failure.</p></div>
+    <div class="card lift crit"><span class="num">03</span><h3>Phi tuyến tính</h3><p>Hàng nghìn nhánh song song, không chậm.</p></div>
+    <div class="card lift crit"><span class="num">04</span><h3>Toàn vẹn</h3><p>Mã băm mật mã chống hỏng dữ liệu ngầm.</p></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="5 lợi ích cốt lõi" data-part="Phần 1 - Sự ra đời">
+  <span class="kick">Phần 1 - Lợi ích cốt lõi</span>
+  <h2 class="st">Vì sao Git là công cụ <span class="hl-o">bắt buộc</span></h2>
+  <div class="grid-cards g3">
+    <div class="card lift rv"><span class="num">01</span><h3>Phân tán (DVCS)</h3><p><code>git clone</code> là có trọn lịch sử dự án. Commit, tạo nhánh, xem log, so sánh code đều làm được offline.</p></div>
+    <div class="card lift rv"><span class="num">02</span><h3>Nhánh siêu nhẹ</h3><p>Một nhánh chỉ là file văn bản <b>41 bytes</b> chứa mã hash. Tạo và chuyển nhánh mất vài mili-giây.</p></div>
+    <div class="card lift rv"><span class="num">03</span><h3>Toàn vẹn dữ liệu</h3><p>Mọi file đều có checksum SHA-1/SHA-256. Sửa lén một commit cũ là Git phát hiện ngay.</p></div>
+    <div class="card lift rv"><span class="num">04</span><h3>Staging Area</h3><p>Chọn chính xác thay đổi nào vào commit tiếp theo, chia việc lớn thành commit nhỏ dễ review.</p></div>
+    <div class="card lift rv"><span class="num">05</span><h3>Truy vết và phục hồi</h3><p>Ai sửa, khi nào, vì sao. Lỡ tay vẫn cứu được bằng <code>reflog</code>, <code>revert</code>, <code>reset</code>.</p></div>
+    <div class="term rv"><div class="term-bar"><i></i><i></i><i></i><span>nhánh = 41 bytes</span></div><div class="term-body" data-auto>
+      <p class="cmd" data-text="cat .git/refs/heads/main"></p>
+      <p class="out">3f9c2a1e8b7d6c5a4f3e2d1c0b9a8f7e6d5c4b3a</p>
+      <p class="cmd" data-text="wc -c .git/refs/heads/main"></p>
+      <p class="ok">41 .git/refs/heads/main</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" id="p2" data-title="Snapshot, không phải Diff" data-part="Phần 2 - Bản chất dữ liệu" data-ex="snapshot">
+  <span class="kick">Phần 2 - Bản chất dữ liệu</span>
+  <h2 class="st">Git lưu <span class="hl-o">ảnh chụp</span>, không lưu bản vá</h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv"><b>SVN, CVS</b> lưu file gốc rồi chồng các bản vá (delta). Muốn xem phiên bản 100 phải cộng dồn 100 bản vá.</li>
+        <li class="rv"><b>Git</b> chụp toàn bộ hệ thống file ở mỗi commit.</li>
+        <li class="rv">File <b>có thay đổi</b>: Git lưu bản mới.</li>
+        <li class="rv">File <b>không đổi</b>: Git chỉ trỏ tới bản đã lưu ở commit trước, nên rất tiết kiệm dung lượng.</li>
+      </ul>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">diff vs snapshot</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Commit là bất biến" data-part="Phần 2 - Bản chất dữ liệu" data-ex="hash">
+  <span class="kick">Phần 2 - Commit bất biến</span>
+  <h2 class="st">Không có chuyện <span class="hl-o">"sửa"</span> commit cũ</h2>
+  <div class="split">
+    <div class="col">
+      <p class="lead rv">Mã hash của commit được tính từ 5 thành phần. Đổi một ký tự trong bất kỳ thành phần nào là ra hash khác.</p>
+      <ul class="pts">
+        <li class="rv">Mọi thao tác "sửa" thực chất là <b>tạo commit mới với hash mới</b>.</li>
+        <li class="rv">Vì hash chứa hash commit cha, đổi một commit là đổi toàn bộ chuỗi phía sau. Đây là lý do <code>rebase</code> và <code>--amend</code> đổi hash.</li>
+      </ul>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">hash = SHA(...)</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="4 vùng làm việc" data-part="Phần 2 - Bản chất dữ liệu" data-ex="areas">
+  <span class="kick">Phần 2 - Bức tranh 4 vùng</span>
+  <h2 class="st">Mỗi dòng code đi qua <span class="hl-o">4 vùng</span></h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv"><b>Working Directory</b>: file bạn đang sửa trên IDE. Chưa được Git bảo vệ.</li>
+        <li class="rv"><b>Staging Area</b> (<code>.git/index</code>): khu dàn cảnh cho bức ảnh sắp chụp.</li>
+        <li class="rv"><b>Local Repo</b> (<code>.git</code>): <code>git commit</code> đóng gói Staging thành snapshot vĩnh viễn.</li>
+        <li class="rv"><b>Remote Repo</b>: GitHub, GitLab. Cầu nối để cả team đồng bộ.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">add - commit - push - pull</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="HEAD: tôi đang ở đâu?" data-part="Phần 2 - Bản chất dữ liệu" data-ex="head">
+  <span class="kick">Phần 2 - Con trỏ HEAD</span>
+  <h2 class="st">HEAD trả lời: <span class="hl-o">"Tôi đang đứng ở đâu?"</span></h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv">Bình thường <code>HEAD</code> trỏ vào <b>tên nhánh</b> (<code>HEAD -> main</code>), còn nhánh trỏ vào commit mới nhất.</li>
+        <li class="rv">Commit mới: nhánh tiến lên, HEAD đi theo nhánh.</li>
+        <li class="rv"><code>git switch</code> sang nhánh khác: HEAD chuyển sang tên nhánh đó, Working Directory đổi theo.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">HEAD -> branch -> commit</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Detached HEAD" data-part="Phần 2 - Bản chất dữ liệu" data-ex="detached">
+  <span class="kick">Phần 2 - Detached HEAD</span>
+  <h2 class="st">Detached HEAD: <span class="hl-r">HEAD rơi tự do</span></h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv">Xảy ra khi checkout thẳng vào một hash hoặc tag: <code>git checkout a1b2c3d</code>.</li>
+        <li class="rv"><b>Rủi ro</b>: commit tạo ở trạng thái này không có nhánh nào trỏ tới. Quay về <code>main</code> là chúng thành "commit mồ côi", bị Garbage Collector xóa sau một thời gian.</li>
+        <li class="rv"><b>Khắc phục</b>: muốn phát triển tiếp từ commit cũ, tạo nhánh ngay: <code>git switch -c feat/ten-nhanh-moi</code>.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><div class="modes" data-cycle><button data-mode="risk" class="on">Không tạo nhánh</button><button data-mode="fix">Có git switch -c</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" id="p3" data-title="Fast-forward" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="ff">
+  <span class="kick">Phần 3 - Fast-forward</span>
+  <h2 class="st">Fast-forward: chỉ <span class="hl-o">trượt con trỏ</span></h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv"><b>Khi nào?</b> Tạo <code>feat/login</code> từ <code>main</code>, trong lúc bạn làm không ai đẩy thêm commit vào <code>main</code>.</li>
+        <li class="rv"><code>main</code> là tổ tiên trực tiếp của <code>feat/login</code>, nên Git không cần commit gộp.</li>
+        <li class="rv">Git chỉ <b>trượt con trỏ main</b> lên ngang đỉnh <code>feat/login</code>. Lịch sử là một đường thẳng.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">git merge feat/login</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="merge vs merge --no-ff" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="noff">
+  <span class="kick">Phần 3 - merge vs --no-ff</span>
+  <h2 class="st"><code>git merge</code> và <code>--no-ff</code>: cùng code, khác lịch sử</h2>
+  <div class="split">
+    <div class="col">
+      <table class="ctable rv">
+        <thead><tr><th></th><th>Mặc định</th><th>--no-ff</th></tr></thead>
+        <tbody>
+          <tr><td>Cơ chế</td><td>Trượt con trỏ</td><td>Ép tạo Merge Commit (2 cha)</td></tr>
+          <tr><td>Đồ thị</td><td>1 đường thẳng, mất dấu nhánh</td><td>Merge bubble gom cả tính năng</td></tr>
+          <tr><td>Revert</td><td>Revert từng commit lẻ</td><td>1 lệnh <code>revert -m 1</code></td></tr>
+          <tr><td>Dùng khi</td><td>Nhánh nhỏ, sửa lỗi vặt</td><td>Feature branch lớn vào develop/main</td></tr>
+        </tbody>
+      </table>
+      <div class="term rv"><div class="term-bar"><i></i><i></i><i></i><span>hủy cả tính năng</span></div><div class="term-body" data-auto>
+        <p class="cmd" data-text="git merge --no-ff feat/login"></p>
+        <p class="cm"># sau này muốn gỡ cả tính năng chỉ cần:</p>
+        <p class="cmd" data-text="git revert -m 1 &lt;merge-commit-hash&gt;"></p>
+      </div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">fast-forward vs --no-ff</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="merge vs rebase" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="mr">
+  <span class="kick">Phần 3 - merge vs rebase</span>
+  <h2 class="st">merge <span class="muted">giữ nguyên</span>, rebase <span class="hl-o">viết lại</span></h2>
+  <div class="split">
+    <div class="col">
+      <table class="ctable rv">
+        <thead><tr><th></th><th>git merge</th><th>git rebase</th></tr></thead>
+        <tbody>
+          <tr><td>Cách làm</td><td>Tạo Merge Commit nối 2 đầu nhánh</td><td>Nhấc commit, đặt lên đỉnh nhánh đích</td></tr>
+          <tr><td>Đồ thị</td><td>Chân thực, nhiều nhánh rẽ</td><td>Một đường thẳng, dễ đọc</td></tr>
+          <tr><td>Hash</td><td>Giữ nguyên 100%</td><td><b class="hl-a">Đổi toàn bộ</b> (vì cha đã đổi)</td></tr>
+          <tr><td>An toàn</td><td>Mọi nhánh</td><td>Chỉ nhánh cá nhân chưa chia sẻ</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">merge (trên main) vs rebase (trên feat)</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide center" data-title="Quy tắc vàng của rebase" data-part="Phần 3 - Câu lệnh cốt lõi">
+  <span class="kick">Phần 3 - Quy tắc vàng</span>
+  <div class="big-warn rv" aria-hidden="true">!</div>
+  <p class="statement st">Chỉ rebase nhánh <span class="hl-g">cá nhân chưa chia sẻ</span>.<br>Không bao giờ rebase <span class="hl-r">main</span>, <span class="hl-r">develop</span>.</p>
+  <p class="lead rv">Rebase đổi hash. Nếu đồng đội đã có bản cũ của nhánh chung, lịch sử hai bên lệch nhau và ai cũng phải gỡ rối. Nhánh chung thì dùng merge hoặc revert.</p>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="pull vs pull --rebase" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="pull">
+  <span class="kick">Phần 3 - pull vs pull --rebase</span>
+  <h2 class="st"><code>git pull</code> sinh <span class="hl-r">commit rác</span>, <code>--rebase</code> thì không</h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv"><code>git pull</code> = <code>fetch</code> + <code>merge</code>. Remote có commit mới và bạn cũng có commit chưa push: Git tạo commit <i>"Merge branch 'develop' of..."</i>. 10 người chung nhánh là hàng trăm commit vô nghĩa.</li>
+        <li class="rv"><code>git pull --rebase</code> = <code>fetch</code> + <code>rebase</code>. Kéo commit đồng đội về trước, đặt commit của bạn lên trên cùng.</li>
+      </ul>
+      <div class="term rv"><div class="term-bar"><i></i><i></i><i></i><span>cấu hình một lần</span></div><div class="term-body" data-auto>
+        <p class="cmd" data-text="git config --global pull.rebase true"></p>
+        <p class="ok">Từ giờ git pull tự động rebase</p>
+      </div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">pull vs pull --rebase</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="reset --soft / --mixed / --hard" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="reset">
+  <span class="kick">Phần 3 - git reset</span>
+  <h2 class="st">reset: 3 cấp độ, khác nhau ở <span class="hl-o">vùng bị xóa</span></h2>
+  <div class="split">
+    <div class="col">
+      <table class="ctable rv">
+        <thead><tr><th></th><th>Commit</th><th>Staging</th><th>Working</th></tr></thead>
+        <tbody>
+          <tr><td><code>--soft</code></td><td>Hủy</td><td class="hl-g">Giữ</td><td class="hl-g">Giữ</td></tr>
+          <tr><td><code>--mixed</code></td><td>Hủy</td><td class="hl-r">Xóa</td><td class="hl-g">Giữ</td></tr>
+          <tr><td><code>--hard</code></td><td>Hủy</td><td class="hl-r">Xóa</td><td class="hl-r">Xóa</td></tr>
+        </tbody>
+      </table>
+      <p class="muted rv"><code>--mixed</code> là mặc định. File untracked (chưa từng <code>add</code>) vẫn còn sau <code>--hard</code>.</p>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><div class="modes" data-cycle><button data-mode="soft" class="on">--soft</button><button data-mode="mixed">--mixed</button><button data-mode="hard">--hard</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-title="cherry-pick" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="cherry">
+  <span class="kick">Phần 3 - git cherry-pick</span>
+  <h2 class="st">cherry-pick: bốc <span class="hl-o">đúng một commit</span></h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv">Chọn đích danh một hoặc vài commit từ nhánh khác, áp vào nhánh hiện tại, không cần merge cả nhánh.</li>
+        <li class="rv"><b>Ví dụ</b>: <code>feat/v2</code> còn làm dở, nhưng có commit <code>8f9a1b2</code> vá lỗi bảo mật. Đứng ở <code>main</code>, bốc riêng bản vá đó đi deploy.</li>
+        <li class="rv">Bản sao có cùng nội dung nhưng <b>hash mới</b>, vì cha của nó khác.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">git cherry-pick 8f9a1b2</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-title="worktree" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="worktree">
+  <span class="kick">Phần 3 - git worktree</span>
+  <h2 class="st">worktree: nhiều nhánh, <span class="hl-o">nhiều thư mục</span>, một .git</h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv"><b>Nỗi đau</b>: đang code dở, server đang chạy, có hotfix gấp. <code>stash</code> rồi <code>checkout</code> thì IDE index lại, server build lại từ đầu.</li>
+        <li class="rv"><b>Giải pháp</b>: checkout nhiều nhánh cùng lúc ra nhiều thư mục, dùng chung một cơ sở dữ liệu <code>.git</code>. Tiết kiệm dung lượng, đồng bộ tức thì.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">worktree add / remove</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-title="tag" data-part="Phần 3 - Câu lệnh cốt lõi" data-ex="tag">
+  <span class="kick">Phần 3 - git tag</span>
+  <h2 class="st">tag đứng yên, <span class="hl-b">branch</span> thì chạy</h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv">Đóng dấu cột mốc phát hành (<code>v1.0.0</code>, <code>v2.1.4</code>). Branch đi theo commit mới, tag đứng yên vĩnh viễn.</li>
+        <li class="rv"><b>Lightweight</b>: chỉ là cái tên trỏ tới hash (<code>git tag v1.0.0</code>).</li>
+        <li class="rv"><b>Annotated</b> (khuyên dùng): object riêng, lưu người tạo, email, ngày giờ, thông điệp.</li>
+        <li class="rv"><code>git push</code> mặc định <b>không</b> đẩy tag. Phải đẩy riêng.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">tag vs branch</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" id="p4" data-title="Chiến lược phân nhánh" data-part="Phần 4 - Quy trình nhóm" data-ex="flow">
+  <span class="kick">Phần 4 - Branching strategy</span>
+  <h2 class="st">GitHub Flow / GitLab Flow: <span class="hl-o">3 làn</span></h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv"><code>main</code>: code đang chạy <b>Production</b>. Luôn ổn định, deploy được bất cứ lúc nào. Protected Branch, cấm push thẳng.</li>
+        <li class="rv"><code>develop</code> (tùy quy mô team): nhánh tích hợp cho <b>Staging / Testing</b>.</li>
+        <li class="rv"><b>Feature / Fix</b>: tách từ <code>main</code> hoặc <code>develop</code>, xong thì mở <b>Pull Request / Merge Request</b> để review trước khi gộp.</li>
+      </ul>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">feature -> PR -> develop -> main</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-title="Đặt tên nhánh" data-part="Phần 4 - Quy trình nhóm">
+  <span class="kick">Phần 4 - Branch naming</span>
+  <h2 class="st">Tên nhánh: <span class="hl-o">loại/mã-ticket-mô-tả</span></h2>
+  <div class="split even">
+    <div class="grid-cards g2">
+      <div class="card lift rv"><span class="num">feat/</span><h3>Tính năng</h3><p><code>feat/&lt;ticket&gt;-&lt;mô-tả&gt;</code></p></div>
+      <div class="card lift rv"><span class="num">fix/</span><h3>Sửa lỗi</h3><p><code>fix/&lt;ticket&gt;-&lt;mô-tả-lỗi&gt;</code></p></div>
+      <div class="card lift rv"><span class="num">hotfix/</span><h3>Vá gấp</h3><p><code>hotfix/&lt;phiên-bản&gt;-&lt;mô-tả&gt;</code></p></div>
+      <div class="card lift rv"><span class="num">refactor/</span><h3>Tái cấu trúc</h3><p><code>refactor/&lt;tên-module&gt;</code></p></div>
+      <p class="muted rv" style="grid-column:1/-1">Chữ thường, gạch ngang <code>-</code>, tiền tố phân loại và mã ticket Jira/Trello.</p>
+    </div>
+    <div class="term big rv"><div class="term-bar"><i></i><i></i><i></i><span>ví dụ chuẩn</span></div><div class="term-body" data-auto>
+      <p class="cmd" data-text="git switch -c feat/PROJ-105-vnpay-payment"></p>
+      <p class="out">Switched to a new branch 'feat/PROJ-105-vnpay-payment'</p>
+      <p class="cmd" data-text="git switch -c fix/PROJ-112-login-token-expired"></p>
+      <p class="cmd" data-text="git switch -c hotfix/v1.2.1-fix-crash-checkout"></p>
+      <p class="cmd" data-text="git switch -c refactor/user-authentication-flow"></p>
+      <p class="cm"># tránh: test, my-branch, Fix_Bug_Moi</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-title="Conventional Commits" data-part="Phần 4 - Quy trình nhóm" data-ex="conv">
+  <span class="kick">Phần 4 - Conventional Commits</span>
+  <h2 class="st">Commit message có <span class="hl-o">cấu trúc</span></h2>
+  <div class="card anat ex-stage">
+    <span class="seg s-type">feat<i class="tg">type</i></span>(<span class="seg s-scope">auth<i class="tg">scope</i></span>): <span class="seg s-desc">add refresh token rotation<i class="tg">mô tả ngắn, thì hiện tại</i></span>
+    <span class="body">Token cũ bị dùng lại sau khi logout. Xoay vòng refresh token để chặn replay.</span>
+    <span class="foot">Closes #105</span>
+  </div>
+  <div class="chips">
+    <span class="chip mono rv"><i></i>feat - tính năng mới</span>
+    <span class="chip mono rv"><i style="background:var(--red)"></i>fix - sửa lỗi</span>
+    <span class="chip mono rv"><i style="background:var(--violet)"></i>refactor - tối ưu cấu trúc</span>
+    <span class="chip mono rv"><i style="background:var(--amber)"></i>perf - hiệu năng</span>
+    <span class="chip mono rv"><i style="background:var(--blue)"></i>docs - tài liệu</span>
+    <span class="chip mono rv"><i style="background:var(--cyan)"></i>test - viết test</span>
+    <span class="chip mono rv"><i style="background:var(--dim)"></i>chore - cấu hình, thư viện, build</span>
+  </div>
+  <p class="muted rv">Body giải thích <b>tại sao</b>. Footer ghi <code>Closes #105</code> hoặc <code>BREAKING CHANGE</code>. Cấu trúc này giúp tự sinh Changelog.</p>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-title="6 bước mỗi ngày" data-part="Phần 4 - Quy trình nhóm" data-ex="daily">
+  <span class="kick">Phần 4 - Quy trình hằng ngày</span>
+  <h2 class="st">6 bước cho <span class="hl-o">mỗi task</span></h2>
+  <div class="split even">
+    <ol class="steps">
+      <li><b>Cập nhật nhánh gốc</b> mới nhất.</li>
+      <li><b>Tạo nhánh riêng</b> theo quy tắc đặt tên.</li>
+      <li><b>Code và commit</b> theo cụm logic nhỏ, <code>git add -p</code> để soát kỹ.</li>
+      <li><b>Đồng bộ lại</b> trước khi tạo PR: rebase lên nhánh gốc, xử lý conflict ở local.</li>
+      <li><b>Push và tạo PR</b>: mô tả thay đổi gì, cách test, ảnh/video nếu là UI.</li>
+      <li><b>Review và merge</b>: ít nhất 1 approve, CI xanh, Squash and Merge, xóa nhánh tạm.</li>
+    </ol>
+    <div class="term big"><div class="term-bar"><i></i><i></i><i></i><span>một ngày làm việc</span></div><div class="term-body"></div></div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section class="slide" id="p5" data-title="Git Hooks" data-part="Phần 5 - Git Hooks" data-ex="hooks">
+  <span class="kick">Phần 5 - Git Hooks</span>
+  <h2 class="st">Hooks: <span class="hl-o">trạm kiểm soát</span> tự động</h2>
+  <div class="split">
+    <div class="col">
+      <ul class="pts">
+        <li class="rv">Script Git tự chạy trước/sau một sự kiện (commit, push, receive). Nằm trong <code>.git/hooks/</code>.</li>
+        <li class="rv"><code>pre-commit</code>: linter, formatter, quét secret. Exit code khác 0 là <b>chặn commit</b>.</li>
+        <li class="rv"><code>commit-msg</code>: kiểm tra Conventional Commits (commitlint).</li>
+        <li class="rv"><code>pre-push</code>: chạy unit test nhanh. Server: <code>pre-receive</code> chặn force push trái phép.</li>
+      </ul>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><div class="modes" data-cycle><button data-mode="pass" class="on">Code sạch</button><button data-mode="fail">Lỗi lint</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-title="Công cụ quản lý hook" data-part="Phần 5 - Git Hooks">
+  <span class="kick">Phần 5 - Công cụ</span>
+  <h2 class="st"><code>.git/hooks</code> không lên remote, nên team dùng <span class="hl-o">công cụ</span></h2>
+  <div class="split even">
+    <div class="grid-cards g2">
+      <div class="card lift rv"><span class="num">JS/TS</span><h3>Husky</h3><p>Lưu hook ngay trong repo, ai clone về cũng có.</p></div>
+      <div class="card lift rv"><span class="num">JS/TS</span><h3>lint-staged</h3><p>Chỉ lint file đang <code>git add</code>, nên cực nhanh.</p></div>
+      <div class="card lift rv"><span class="num">JS/TS</span><h3>commitlint</h3><p>Chặn message sai chuẩn ở hook <code>commit-msg</code>.</p></div>
+      <div class="card lift rv"><span class="num">Đa ngôn ngữ</span><h3>pre-commit</h3><p>Python, PHP, Go, Java... cấu hình bằng <code>.pre-commit-config.yaml</code>.</p></div>
+    </div>
+    <div class="term big rv"><div class="term-bar"><i></i><i></i><i></i><span>cài cho team JS</span></div><div class="term-body" data-auto>
+      <p class="cmd" data-text="npm i -D husky lint-staged @commitlint/cli @commitlint/config-conventional"></p>
+      <p class="cmd" data-text="npx husky init"></p>
+      <p class="cmd" data-text="echo &quot;npx lint-staged&quot; &gt; .husky/pre-commit"></p>
+      <p class="cmd" data-text="echo &quot;npx --no -- commitlint --edit $1&quot; &gt; .husky/commit-msg"></p>
+      <p class="cmd" data-text="git commit -m &quot;update&quot;"></p>
+      <p class="err">✖ subject may not be empty, type may not be empty</p>
+      <p class="err">husky - commit-msg script failed (code 1)</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- 25 -->
+<section class="slide" id="p6" data-title="TH1: push commit lỗi lên nhánh chung" data-part="Phần 6 - Tình huống thực chiến" data-ex="revert">
+  <span class="kick">Phần 6 - Tình huống 1/7</span>
+  <h2 class="st">Đã push commit lỗi lên <span class="hl-r">nhánh chung</span></h2>
+  <div class="split">
+    <div class="col">
+      <div class="card bad rv"><span class="tagline">Sai lầm hay gặp</span><p><code>git reset --hard</code> rồi <code>git push -f</code>: lịch sử của cả team bị lệch.</p></div>
+      <div class="card good rv"><span class="tagline">Cách chuẩn</span><p><code>git revert</code> tạo commit mới đảo ngược commit lỗi. Lịch sử vẫn liền mạch.</p></div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><div class="modes" data-cycle><button data-mode="wrong" class="on">Sai: reset + push -f</button><button data-mode="right">Đúng: revert</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 26 -->
+<section class="slide" data-title="TH2: push bị từ chối" data-part="Phần 6 - Tình huống thực chiến" data-ex="rejected">
+  <span class="kick">Phần 6 - Tình huống 2/7</span>
+  <h2 class="st">Push bị <span class="hl-r">từ chối</span> vì đồng nghiệp đẩy trước</h2>
+  <div class="split">
+    <div class="col">
+      <div class="card bad rv"><span class="tagline">Thông báo lỗi</span><p class="mono" style="font-size:.85em">Updates were rejected because the remote contains work that you do not have locally.</p></div>
+      <div class="card good rv"><span class="tagline">Cách chuẩn</span><p>Kéo code đồng nghiệp về, xếp commit của mình lên trên cùng, rồi push lại. Conflict: sửa file, <code>git add .</code>, <code>git rebase --continue</code>.</p></div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">rejected -> pull --rebase -> push</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 27 -->
+<section class="slide" data-title="TH3: force push an toàn" data-part="Phần 6 - Tình huống thực chiến" data-ex="lease">
+  <span class="kick">Phần 6 - Tình huống 3/7</span>
+  <h2 class="st">Force push sau rebase, <span class="hl-g">không đè</span> code người khác</h2>
+  <div class="split">
+    <div class="col">
+      <div class="card bad rv"><span class="tagline">Đừng</span><p><code>git push -f</code> ghi đè remote bất kể trên đó có gì.</p></div>
+      <div class="card good rv"><span class="tagline">Luôn dùng</span><p><code>--force-with-lease</code>: chỉ ghi đè nếu remote chưa có commit mới nào kể từ lần cuối bạn fetch.</p></div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><div class="modes" data-cycle><button data-mode="force" class="on">push -f</button><button data-mode="lease">--force-with-lease</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 28 -->
+<section class="slide" data-title="TH4: commit nhầm vào main" data-part="Phần 6 - Tình huống thực chiến" data-ex="wrongmain">
+  <span class="kick">Phần 6 - Tình huống 4/7</span>
+  <h2 class="st">Lỡ commit nhầm vào <span class="hl-r">main</span> (chưa push)</h2>
+  <div class="split">
+    <div class="col">
+      <div class="card bad rv"><span class="tagline">Vấn đề</span><p>2 commit tính năng nằm trên <code>main</code> thay vì nhánh riêng.</p></div>
+      <div class="card good rv"><span class="tagline">3 bước</span><p>Tạo nhánh giữ công sức, lùi <code>main</code> về sạch, chuyển sang nhánh mới làm tiếp.</p></div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">branch - reset --hard - switch</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 29 -->
+<section class="slide" data-title="TH5: gộp commit lẻ" data-part="Phần 6 - Tình huống thực chiến" data-ex="squash">
+  <span class="kick">Phần 6 - Tình huống 5/7</span>
+  <h2 class="st">Gộp 5 commit <span class="muted">"fix typo"</span> thành <span class="hl-g">1</span> trước khi tạo PR</h2>
+  <div class="split">
+    <div class="col">
+      <div class="card bad rv"><span class="tagline">Vấn đề</span><p>Lịch sử PR đầy "fix typo", "update", "update again". Reviewer không đọc nổi.</p></div>
+      <div class="card good rv"><span class="tagline">Interactive rebase</span><p>Giữ <code>pick</code> ở dòng đầu, đổi 4 dòng dưới thành <code>squash</code> (hoặc <code>s</code>), lưu lại và viết message mới chuyên nghiệp.</p></div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">git rebase -i HEAD~5</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 30 -->
+<section class="slide" data-title="TH6: reflog cứu code" data-part="Phần 6 - Tình huống thực chiến" data-ex="reflog">
+  <span class="kick">Phần 6 - Tình huống 6/7</span>
+  <h2 class="st">Lỡ <code>reset --hard</code>, mất sạch code? <span class="hl-g">reflog</span></h2>
+  <div class="split">
+    <div class="col">
+      <div class="card bad rv"><span class="tagline">Vấn đề</span><p>Gõ nhầm <code>git reset --hard</code> hoặc xóa nhầm nhánh. Commit biến mất khỏi <code>git log</code>.</p></div>
+      <div class="card good rv"><span class="tagline">Phao cứu sinh</span><p><code>git reflog</code> ghi lại mọi lần HEAD di chuyển trên máy bạn trong 30-90 ngày. Tìm hash trước lúc gõ nhầm, tạo nhánh trỏ vào đó.</p></div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">reset --hard -> reflog -> switch -c</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 31 -->
+<section class="slide" data-title="TH7: lộ .env / API key" data-part="Phần 6 - Tình huống thực chiến" data-ex="leak">
+  <span class="kick">Phần 6 - Tình huống 7/7</span>
+  <h2 class="st">Lỡ đẩy <code>.env</code>, API key lên repo</h2>
+  <div class="split">
+    <div class="col">
+      <div class="card bad rv"><span class="tagline">Việc số 1, làm ngay</span><p>Vào AWS, Google Cloud, Database... <b>Revoke và Rotate</b> toàn bộ key bị lộ. Bot quét GitHub chỉ mất vài giây.</p></div>
+      <div class="card good rv"><span class="tagline">Việc số 2 và 3</span><p>Chưa push: gỡ file khỏi commit. Đã push: <code>git-filter-repo</code> hoặc BFG Repo-Cleaner xóa khỏi toàn bộ lịch sử, báo team clone lại.</p></div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
+    </div>
+    <div class="ex card">
+      <div class="ex-top"><span class="ex-title">push .env -> bot -> rotate</span><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-stage"></div>
+      <p class="ex-cap"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 32 -->
+<section class="slide" id="appendix" data-title="Cheat sheet" data-part="Phụ lục">
+  <span class="kick">Phụ lục A - Cheat sheet</span>
+  <h2 class="st">Tra cứu nhanh</h2>
+  <div class="card rv" style="overflow-x:auto">
+    <table class="ctable">
+      <thead><tr><th>Mục tiêu</th><th>Câu lệnh</th></tr></thead>
+      <tbody>
+        <tr class="rv"><td>Xem cây nhánh trực quan</td><td><code>git log --oneline --graph --decorate --all -n 15</code></td></tr>
+        <tr class="rv"><td>Chọn từng đoạn code để add</td><td><code>git add -p</code></td></tr>
+        <tr class="rv"><td>Cất tạm code dở (kèm file mới)</td><td><code>git stash push -u -m "ghi chú"</code></td></tr>
+        <tr class="rv"><td>Lấy lại code vừa cất và xóa khỏi stash</td><td><code>git stash pop</code></td></tr>
+        <tr class="rv"><td>Sửa message commit gần nhất (chưa push)</td><td><code>git commit --amend -m "message mới"</code></td></tr>
+        <tr class="rv"><td>Hủy thay đổi ở file chưa add</td><td><code>git restore &lt;tên-file&gt;</code></td></tr>
+        <tr class="rv"><td>Rút file từ Staging về Working Dir</td><td><code>git restore --staged &lt;tên-file&gt;</code></td></tr>
+        <tr class="rv"><td>Dọn nhánh remote đã bị xóa</td><td><code>git fetch --prune</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 33 -->
+<section class="slide" data-title="~/.gitconfig tối ưu" data-part="Phụ lục">
+  <span class="kick">Phụ lục B - ~/.gitconfig</span>
+  <h2 class="st">Cấu hình <span class="hl-o">đáng đồng tiền bát gạo</span></h2>
+  <div class="term big rv"><div class="term-bar"><i></i><i></i><i></i><span>chạy một lần trên máy cá nhân</span></div><div class="term-body" data-auto>
+    <p class="cm"># 1. git pull tự rebase, lịch sử thẳng đẹp</p>
+    <p class="cmd" data-text="git config --global pull.rebase true"></p>
+    <p class="cm"># 2. tự xóa tham chiếu nhánh đã bị xóa trên remote khi fetch</p>
+    <p class="cmd" data-text="git config --global fetch.prune true"></p>
+    <p class="cm"># 3. Rerere: Git nhớ cách bạn đã giải conflict</p>
+    <p class="cmd" data-text="git config --global rerere.enabled true"></p>
+    <p class="cm"># 4. conflict 3 chiều, hiện cả code gốc</p>
+    <p class="cmd" data-text="git config --global merge.conflictstyle zdiff3"></p>
+    <p class="cm"># 5. nhánh mặc định khi init là main</p>
+    <p class="cmd" data-text="git config --global init.defaultBranch main"></p>
+    <p class="cm"># 6. alias git lg: cây lịch sử màu sắc</p>
+    <p class="cmd" data-text="git config --global alias.lg &quot;log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset' --abbrev-commit&quot;"></p>
+  </div></div>
+</section>
+
+<!-- 34 -->
+<section class="slide center" data-title="Cảm ơn" data-part="Kết">
+  <span class="kick rv">Kết</span>
+  <h1 class="st">Cảm ơn, <span class="grad">hỏi đáp</span></h1>
+  <div class="grid-cards g3">
+    <div class="card lift rv"><span class="num">01</span><h3><code>git pull --rebase</code></h3><p>Lịch sử thẳng, không commit rác.</p></div>
+    <div class="card lift rv"><span class="num">02</span><h3><code>git revert</code> trên nhánh chung</h3><p>Không reset + force push lên main/develop.</p></div>
+    <div class="card lift rv"><span class="num">03</span><h3><code>--force-with-lease</code></h3><p>Không bao giờ <code>-f</code> trần.</p></div>
+  </div>
+  <p class="muted rv">Nhấn <kbd>O</kbd> để xem lại toàn bộ slide.</p>
+</section>
+
+</main>
+
+<nav class="hud" aria-label="Điều hướng slide">
+  <div class="hud-info"><span class="hud-num" id="hudNum">01 <span>/ 34</span></span><span class="hud-part" id="hudPart"></span></div>
+  <div class="hud-btns">
+    <button id="btnOv" title="Tổng quan (O)" aria-label="Tổng quan"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+    <button id="btnFs" title="Toàn màn hình (F)" aria-label="Toàn màn hình"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button id="btnPrev" title="Slide trước (←)" aria-label="Slide trước"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button id="btnNext" title="Slide tiếp (→)" aria-label="Slide tiếp"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  </div>
+</nav>
+
+<div class="ov" id="ov" role="dialog" aria-label="Tổng quan slide">
+  <div class="ov-head"><h2>Tổng quan</h2><button class="close-btn" id="ovClose">Đóng (Esc)</button></div>
+  <div class="ov-grid" id="ovGrid"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+<script src="js/explainers.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>
