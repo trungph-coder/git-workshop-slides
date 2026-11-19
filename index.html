@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>document.documentElement.classList.add('js-anim')</script>
 <title>Git cho Team Dev - Workshop</title>
 <meta name="description" content="Slide workshop Git cho team dev: bản chất, 4 vùng làm việc, merge, rebase, reset, cherry-pick, worktree, quy trình nhóm, git hooks và các tình huống cứu nguy, minh hoạ bằng animation.">
 <meta name="theme-color" content="#06070c">
@@ -25,7 +26,7 @@
   <h1 class="st">Git cho <span class="grad">Team Dev</span></h1>
   <p class="lead rv">Từ hiểu bản chất, làm chủ quy trình đến xử lý sự cố thực chiến. Mỗi khái niệm có một animation để bạn nhìn thấy Git làm gì bên trong.</p>
   <div class="meta rv"><span>Biên soạn và trình bày: <b>Diện Nguyễn Duy</b></span><span>Dành cho: <b>Frontend, Backend, Mobile, QA/QC</b></span></div>
-  <div class="kbd-hint rv"><kbd>→</kbd><kbd>Space</kbd> tiếp <kbd>←</kbd> lùi <kbd>O</kbd> tổng quan <kbd>F</kbd> toàn màn hình <kbd>R</kbd> phát lại animation</div>
+  <div class="kbd-hint rv"><kbd>→</kbd><kbd>Space</kbd> bước tiếp, hết bước thì sang slide <kbd>←</kbd> lùi <kbd>P</kbd> phát / dừng <kbd>O</kbd> tổng quan <kbd>F</kbd> toàn màn hình. Click vào sơ đồ để xem giải thích.</div>
 </section>
 
 <!-- 2 -->
@@ -58,6 +59,7 @@
     <div class="card lift crit"><span class="num">03</span><h3>Phi tuyến tính</h3><p>Hàng nghìn nhánh song song, không chậm.</p></div>
     <div class="card lift crit"><span class="num">04</span><h3>Toàn vẹn</h3><p>Mã băm mật mã chống hỏng dữ liệu ngầm.</p></div>
   </div>
+  <div class="step-slot" data-ctl></div>
 </section>
 
 <!-- 4 -->
@@ -177,7 +179,7 @@
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
     </div>
     <div class="ex card">
-      <div class="ex-top"><div class="modes" data-cycle><button data-mode="risk" class="on">Không tạo nhánh</button><button data-mode="fix">Có git switch -c</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-top"><div class="modes"><button data-mode="risk" class="on">Không tạo nhánh</button><button data-mode="fix">Có git switch -c</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
       <div class="ex-stage"></div>
       <p class="ex-cap"></p>
     </div>
@@ -262,7 +264,7 @@
 <section class="slide center" data-title="Quy tắc vàng của rebase" data-part="Phần 3 - Câu lệnh cốt lõi">
   <span class="kick">Phần 3 - Quy tắc vàng</span>
   <div class="big-warn rv" aria-hidden="true">!</div>
-  <p class="statement st">Chỉ rebase nhánh <span class="hl-g">cá nhân chưa chia sẻ</span>.<br>Không bao giờ rebase <span class="hl-r">main</span>, <span class="hl-r">develop</span>.</p>
+  <p class="statement st">Chỉ rebase nhánh <span class="hl-g">cá nhân chưa <span class="nw">chia sẻ</span></span>.<br>Không bao giờ rebase <span class="hl-r">main</span>, <span class="hl-r">develop</span>.</p>
   <p class="lead rv">Rebase đổi hash. Nếu đồng đội đã có bản cũ của nhánh chung, lịch sử hai bên lệch nhau và ai cũng phải gỡ rối. Nhánh chung thì dùng merge hoặc revert.</p>
 </section>
 
@@ -307,7 +309,7 @@
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
     </div>
     <div class="ex card">
-      <div class="ex-top"><div class="modes" data-cycle><button data-mode="soft" class="on">--soft</button><button data-mode="mixed">--mixed</button><button data-mode="hard">--hard</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-top"><div class="modes"><button data-mode="soft" class="on">--soft</button><button data-mode="mixed">--mixed</button><button data-mode="hard">--hard</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
       <div class="ex-stage"></div>
       <p class="ex-cap"></p>
     </div>
@@ -429,6 +431,7 @@
     <span class="body">Token cũ bị dùng lại sau khi logout. Xoay vòng refresh token để chặn replay.</span>
     <span class="foot">Closes #105</span>
   </div>
+  <div class="step-slot" data-ctl></div>
   <div class="chips">
     <span class="chip mono rv"><i></i>feat - tính năng mới</span>
     <span class="chip mono rv"><i style="background:var(--red)"></i>fix - sửa lỗi</span>
@@ -446,6 +449,7 @@
   <span class="kick">Phần 4 - Quy trình hằng ngày</span>
   <h2 class="st">6 bước cho <span class="hl-o">mỗi task</span></h2>
   <div class="split even">
+    <div class="col">
     <ol class="steps">
       <li><b>Cập nhật nhánh gốc</b> mới nhất.</li>
       <li><b>Tạo nhánh riêng</b> theo quy tắc đặt tên.</li>
@@ -454,6 +458,8 @@
       <li><b>Push và tạo PR</b>: mô tả thay đổi gì, cách test, ảnh/video nếu là UI.</li>
       <li><b>Review và merge</b>: ít nhất 1 approve, CI xanh, Squash and Merge, xóa nhánh tạm.</li>
     </ol>
+    <div class="step-slot" data-ctl data-nocap></div>
+    </div>
     <div class="term big"><div class="term-bar"><i></i><i></i><i></i><span>một ngày làm việc</span></div><div class="term-body"></div></div>
   </div>
 </section>
@@ -473,7 +479,7 @@
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
     </div>
     <div class="ex card">
-      <div class="ex-top"><div class="modes" data-cycle><button data-mode="pass" class="on">Code sạch</button><button data-mode="fail">Lỗi lint</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-top"><div class="modes"><button data-mode="pass" class="on">Code sạch</button><button data-mode="fail">Lỗi lint</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
       <div class="ex-stage"></div>
       <p class="ex-cap"></p>
     </div>
@@ -483,7 +489,7 @@
 <!-- 24 -->
 <section class="slide" data-title="Công cụ quản lý hook" data-part="Phần 5 - Git Hooks">
   <span class="kick">Phần 5 - Công cụ</span>
-  <h2 class="st"><code>.git/hooks</code> không lên remote, nên team dùng <span class="hl-o">công cụ</span></h2>
+  <h2 class="st"><code>.git/hooks</code> không lên remote, nên team dùng <span class="hl-o nw">công cụ</span></h2>
   <div class="split even">
     <div class="grid-cards g2">
       <div class="card lift rv"><span class="num">JS/TS</span><h3>Husky</h3><p>Lưu hook ngay trong repo, ai clone về cũng có.</p></div>
@@ -514,7 +520,7 @@
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
     </div>
     <div class="ex card">
-      <div class="ex-top"><div class="modes" data-cycle><button data-mode="wrong" class="on">Sai: reset + push -f</button><button data-mode="right">Đúng: revert</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-top"><div class="modes"><button data-mode="wrong" class="on">Sai: reset + push -f</button><button data-mode="right">Đúng: revert</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
       <div class="ex-stage"></div>
       <p class="ex-cap"></p>
     </div>
@@ -550,7 +556,7 @@
       <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>~/project</span></div><div class="term-body"></div></div>
     </div>
     <div class="ex card">
-      <div class="ex-top"><div class="modes" data-cycle><button data-mode="force" class="on">push -f</button><button data-mode="lease">--force-with-lease</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
+      <div class="ex-top"><div class="modes"><button data-mode="force" class="on">push -f</button><button data-mode="lease">--force-with-lease</button></div><button class="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Phát lại</button></div>
       <div class="ex-stage"></div>
       <p class="ex-cap"></p>
     </div>
