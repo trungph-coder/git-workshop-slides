@@ -538,3 +538,28 @@ kbd {
   .slide[data-tr] { transform: none !important; filter: none !important; clip-path: none !important; }
 }
 .nw { white-space: nowrap; }
+
+/* ---------- closing: Kahoot ---------- */
+.ico { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; display: block; }
+.kh-head { display: flex; align-items: center; gap: clamp(14px, 1.8vw, 24px); }
+.kh-ico {
+  flex: none; display: grid; place-items: center; width: clamp(56px, 5.4vw, 80px); aspect-ratio: 1; border-radius: 20px;
+  font-size: clamp(30px, 2.9vw, 44px); color: #fff;
+  background: linear-gradient(135deg, #f05033, #c2410c); box-shadow: 0 10px 34px -8px rgba(240, 80, 51, .65), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.kh-ttl { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.kh-steps .card { display: flex; align-items: flex-start; gap: 14px; border-top: 2px solid var(--ac); }
+.kh-steps .card .num { color: var(--ac); }
+.kh-steps .card h3 { margin: 0; }
+.kh-steps .card p { font-size: var(--fs-cap); margin-top: 4px; }
+.kh-tile {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; font-size: 22px;
+  color: var(--ac); background: rgba(255, 255, 255, .04); border: 1px solid var(--line);
+}
+.kh-row { align-items: start; }
+.kh-after { display: flex; flex-direction: column; gap: 8px; }
+.kh-after .tagline { color: var(--green); }
+.kh-after p { display: flex; align-items: center; gap: 10px; color: #dfe5ee; }
+.kh-mini { flex: none; font-size: 18px; color: var(--mute); }
+.gsvg .burst { pointer-events: none; }
+@media (max-width: 620px) { .kh-steps .card { padding: 12px 14px; } }

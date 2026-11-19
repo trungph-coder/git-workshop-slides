@@ -1202,6 +1202,45 @@
     return q.finish();
   };
 
+  /* ---------- closing: the workshop lands as the final commit ---------- */
+  EX.kahoot = function (stage, slide) {
+    var s = svg(stage, 640, 230), q = Q(), Y = 132, i;
+    var parts = ['Sự ra đời', 'Bản chất', 'Lệnh cơ bản', 'Nhánh và merge', 'Quy trình team', 'Tình huống thực chiến'];
+    var c = parts.map(function (t, k) { return node(s, 50 + k * 80, Y, String(k + 1), '', { info: 'Phần ' + (k + 1) + ': ' + t + '.' }); });
+    var e = []; for (i = 0; i < 5; i++) e.push(edge(s, c[i], c[i + 1], 'main'));
+    var W = node(s, 570, Y, 'W', 'new', { r: 22, info: 'Commit 7e1a0c9 "workshop: completed successfully". Commit cuối cùng của buổi học.' });
+    var eW = edge(s, c[5], W, 'main');
+    var main = ptr(s, 'main', 450, Y + 44), head = ptr(s, 'HEAD', 450, Y - 44, 'head');
+    var tag = ptr(s, 'v1.0-kahoot', 570, Y + 82, 'tag', { info: 'Tag đánh dấu mốc: học xong, sang phần Kahoot.' });
+    var lbl = txt(s, 50, 36, '6 phần workshop = 6 commit trên main', 'lbl b', { show: true });
+    var ring = el('circle', { cx: 570, cy: Y, r: 22, fill: 'none', stroke: '#4ade80', 'stroke-width': 2, class: 'burst' }, s.B); fb(ring); ring.style.opacity = 0;
+    var COL = ['#f05033', '#5aa9ff', '#a78bfa', '#4ade80', '#fbbf24', '#22d3ee'];
+    var bits = [];
+    for (i = 0; i < 18; i++) {
+      var a = i / 18 * Math.PI * 2 + (i % 2 ? 0.17 : 0), d = 52 + (i % 3) * 16;
+      var b = i % 3 === 0 ? el('rect', { x: 566, y: Y - 4, width: 8, height: 8, rx: 2, fill: COL[i % 6], class: 'burst' }, s.T) : el('circle', { cx: 570, cy: Y, r: i % 3 === 1 ? 4 : 3, fill: COL[i % 6], class: 'burst' }, s.T);
+      fb(b); b.style.opacity = 0; b.dx = Math.cos(a) * d; b.dy = Math.sin(a) * d * 0.8; bits.push(b);
+    }
+    var L = term(slide, ['git commit -m "workshop: completed successfully"', { out: '[main 7e1a0c9] workshop: completed successfully', cls: 'ok' }, 'git tag v1.0-kahoot', { out: '# Mở kahoot.it, nhập mã game trên màn hình', cls: 'cm' }]);
+    q.step('Mỗi phần đã học là một commit trên main.');
+    var seq = []; c.forEach(function (n, k) { seq.push(n); if (e[k]) seq.push(e[k]); }); seqPop(q, seq, 90);
+    q.add(pop(main)).go(pop(head), 100);
+    q.step('git commit: commit cuối rơi xuống graph, main và HEAD tiến lên theo.');
+    q.type(L[0]);
+    q.go(draw(eW, { duration: 380 })).add(drop(W, { duration: 820 }));
+    q.add(mv(main, 570, Y + 44, { duration: 700, easing: 'easeOutBack' }), 380).go(mv(head, 570, Y - 44, { duration: 700, easing: 'easeOutBack' }), 380);
+    q.type(L[1]);
+    q.step('Hoàn thành workshop. Gắn tag mốc, và đến giờ Kahoot!');
+    q.type(L[2]);
+    q.add({ targets: ring, opacity: [0.9, 0], scale: [1, 4.2], duration: 1000, easing: 'easeOutQuad' });
+    bits.forEach(function (b, k) {
+      q.add({ targets: b, translateX: [0, b.dx], translateY: [0, b.dy], rotate: [0, (k % 2 ? 1 : -1) * 160], opacity: [{ value: 1, duration: 60 }, { value: 1, duration: 520 }, { value: 0, duration: 420 }], duration: 1000, easing: 'easeOutCubic' }, k * 12);
+    });
+    q.add(pulse(W, { duration: 600 }));
+    q.go(drop(tag, { duration: 700 }), 250).type(L[3]);
+    return q.finish();
+  };
+
   /* auto-typing terminal for static command slides */
   function autoTerm(body) {
     var q = Q(), ps = body.querySelectorAll('p');
